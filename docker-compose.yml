@@ -43,6 +43,8 @@ acmeair-authservice-java:
   dockerfile: Dockerfile-ol-base
   net: ${NETWORK}
   build: ../acmeair-authservice-java/
+  security_opt:
+    - seccomp:unconfined
   environment:
     - LICENSE=accept
   mem_limit: 512m
@@ -52,6 +54,8 @@ acmeair-bookingservice-java:
   dockerfile: Dockerfile-ol-base
   net: ${NETWORK}
   build: ../acmeair-bookingservice-java/
+  security_opt:
+    - seccomp:unconfined
   environment:
     - LICENSE=accept
     - MONGO_HOST=acmeair-booking-db
@@ -64,6 +68,8 @@ acmeair-customerservice-java:
   dockerfile: Dockerfile-ol-base
   net: ${NETWORK}
   build: ../acmeair-customerservice-java/
+  security_opt:
+    - seccomp:unconfined
   environment:
     - LICENSE=accept
     - MONGO_HOST=acmeair-customer-db
@@ -76,6 +82,8 @@ acmeair-flightservice-java:
   dockerfile: Dockerfile-ol-base
   net: ${NETWORK}
   build: ../acmeair-flightservice-java/
+  security_opt:
+    - seccomp:unconfined
   environment:
     - LICENSE=accept
     - MONGO_HOST=acmeair-flight-db
