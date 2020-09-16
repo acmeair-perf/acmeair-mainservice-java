@@ -31,7 +31,7 @@ acmeair-nginx1:
 
 acmeair-mainservice-java:
   container_name: acmeair-mainservice-java
-  dockerfile: Dockerfile-daily
+  dockerfile: Dockerfile-wf
   net: ${NETWORK}
   build: ../acmeair-mainservice-java/
   environment:
@@ -40,58 +40,57 @@ acmeair-mainservice-java:
 
 acmeair-authservice-java:
   container_name: acmeair-authservice-java
-  dockerfile: Dockerfile-daily
+  dockerfile: Dockerfile-wf
   net: ${NETWORK}
   build: ../acmeair-authservice-java/
-  security_opt:
-    - seccomp:unconfined
+  volumes:
+    - ./profiles:/tmp/profiles
   environment:
     - LICENSE=accept
-    - ACMEAIR_STACKAA_CUSTOMER_URL=http://acmeair-nginx1/customer
+    - JAVA_OPTS=-XX:StartFlightRecording=delay=20s,filename=/tmp/profiles/auth.jfr,dumponexit=true
   mem_limit: 512m
 
 acmeair-bookingservice-java:
   container_name: acmeair-bookingservice-java
-  dockerfile: Dockerfile-daily
+  dockerfile: Dockerfile-wf
   net: ${NETWORK}
   build: ../acmeair-bookingservice-java/
-  security_opt:
-    - seccomp:unconfined
   environment:
     - LICENSE=accept
     - MONGO_HOST=acmeair-booking-db
-    - ACMEAIR_STACKAA_AUTH_URL=http://acmeair-nginx1/auth
-    - ACMEAIR_STACKAA_CUSTOMER_URL=http://acmeair-nginx1/customer
-    - ACMEAIR_STACKAA_FLIGHT_URL=http://acmeair-nginx1/flight
+    - JAVA_OPTS=-XX:StartFlightRecording=delay=20s,name=acmeair-booking,filename=/tmp/profiles/booking.jfr,dumponexit=true
   volumes_from:
     - acmeair-booking-db
+  volumes:
+    - ./profiles:/tmp/profiles
   mem_limit: 512m
 
 acmeair-customerservice-java:
   container_name: acmeair-customerservice-java
-  dockerfile: Dockerfile-daily
+  dockerfile: Dockerfile-wf
   net: ${NETWORK}
   build: ../acmeair-customerservice-java/
-  security_opt:
-    - seccomp:unconfined
   environment:
     - LICENSE=accept
     - MONGO_HOST=acmeair-customer-db
-    - ACMEAIR_STACKAA_AUTH_URL=http://acmeair-nginx1/auth
+    - JAVA_OPTS=-XX:StartFlightRecording=delay=20s,filename=/tmp/profiles/customer.jfr,dumponexit=true
   volumes_from:
     - acmeair-customer-db
+  volumes:
+    - ./profiles:/tmp/profiles
   mem_limit: 512m
 
 acmeair-flightservice-java:
   container_name: acmeair-flightservice-java
-  dockerfile: Dockerfile-daily
+  dockerfile: Dockerfile-wf
   net: ${NETWORK}
   build: ../acmeair-flightservice-java/
-  security_opt:
-    - seccomp:unconfined
   environment:
     - LICENSE=accept
     - MONGO_HOST=acmeair-flight-db
+    - JAVA_OPTS=-XX:StartFlightRecording=delay=20s,filename=/tmp/profiles/flightservice.jfr,dumponexit=true
+  volumes:
+    - ./profiles:/tmp/profiles
   volumes_from:
     - acmeair-flight-db
   mem_limit: 512m
